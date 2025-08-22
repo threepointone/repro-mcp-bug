@@ -1,5 +1,9 @@
 import { DurableObject } from "cloudflare:workers";
 
+declare const SCRIPT_RANDOM_ID: string;
+
+console.log(SCRIPT_RANDOM_ID);
+
 export class MyDO extends DurableObject<Env> {
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
@@ -35,6 +39,19 @@ export class MyDO extends DurableObject<Env> {
     console.log("Received message:", message);
     ws.send("Hello, world back!\n");
   }
+
+  webSocketClose(
+    ws: WebSocket,
+    code: number,
+    reason: string,
+    wasClean: boolean
+  ): void | Promise<void> {
+    ws.close();
+  }
+
+  webSocketError(ws: WebSocket, error: Error): void | Promise<void> {
+    ws.close();
+  }
 }
 
 export default {
@@ -46,7 +63,7 @@ export default {
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
-        const id = env.MyDO.idFromName("some-name");
+        const id = env.MyDO.idFromName(`some-name-${SCRIPT_RANDOM_ID}`);
         const myDO = env.MyDO.get(id);
         const res = await myDO.fetch("http://example.com", {
           headers: {

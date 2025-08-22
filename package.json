@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "types": "npx wrangler types env.d.ts --include-runtime false --strict-vars false",
-    "start": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "start": "wrangler dev --define SCRIPT_RANDOM_ID:'\"'$(openssl rand -hex 8)'\"'",
+    "deploy": "wrangler deploy --define SCRIPT_RANDOM_ID:'\"'$(openssl rand -hex 8)'\"'"
   },
   "keywords": [],
   "author": "",
